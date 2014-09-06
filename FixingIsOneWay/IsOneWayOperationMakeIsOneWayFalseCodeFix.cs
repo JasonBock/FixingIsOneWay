@@ -50,7 +50,8 @@ namespace FixingIsOneWay
 
 			return new[]
 			{
-				CodeAction.Create("Make IsOneWay = false", document.WithSyntaxRoot(newRoot))
+				CodeAction.Create(IsOneWayOperationMakeIsOneWayFalseCodeFixConstants.Description, 
+					document.WithSyntaxRoot(newRoot))
 			};
 		}
 	}

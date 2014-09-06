@@ -97,9 +97,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeFixProvider.cs" />
     <Compile Include="IsOneWayOperationAnalyzer.cs" />
     <Compile Include="IsOneWayOperationConstants.cs" />
+    <Compile Include="IsOneWayOperationMakeIsOneWayFalseCodeFix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
