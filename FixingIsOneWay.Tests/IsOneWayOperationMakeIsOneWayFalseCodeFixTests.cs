@@ -1,10 +1,11 @@
-﻿using Microsoft.CodeAnalysis.CodeActions;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,8 +20,8 @@ namespace FixingIsOneWay.Test
 			var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
 			var ids = fix.GetFixableDiagnosticIds().ToList();
 
-			Assert.AreEqual(1, ids.Count);
-			Assert.AreEqual(IsOneWayOperationConstants.DiagnosticId, ids[0]);
+			Assert.AreEqual(1, ids.Count, nameof(List<>.Count));
+			Assert.AreEqual(IsOneWayOperationConstants.DiagnosticId, ids[0], nameof(IsOneWayOperationConstants.DiagnosticId));
 		}
 
 		[TestMethod]
@@ -34,20 +35,22 @@ public sealed class OneWayTest
 	[OperationContract(IsOneWay = true)]
 	public string MyOperation() { return null; }
 }";
-			var document = TestHelpers.CreateDocument(code);
+			var document = TestHelpers.Create(code);
 			var tree = await document.GetSyntaxTreeAsync();
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
-				code, document, new TextSpan(119, 12));
+				document, new TextSpan(119, 12));
 			var sourceSpan = diagnostics[0].Location.SourceSpan;
 
+			var actions = new List<CodeAction>();
+			var codeActionRegistration = new Action<CodeAction, IEnumerable<Diagnostic>>(
+				(a, _) => { actions.Add(a); });
+
          var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
-			var actions = (await fix.GetFixesAsync(document, sourceSpan, diagnostics,
-				new CancellationToken(false))).ToList();
+			var codeFixContext = new CodeFixContext(document, diagnostics[0], codeActionRegistration, new CancellationToken(false));
+			await fix.ComputeFixesAsync(codeFixContext);
 
 			Assert.AreEqual(1, actions.Count);
 			var action = actions[0];
-			Assert.AreEqual(IsOneWayOperationMakeIsOneWayFalseCodeFixConstants.Description, 
-				action.Description);
 
 			var operation = (await action.GetOperationsAsync(
 				new CancellationToken(false))).ToArray()[0] as ApplyChangesOperation;
@@ -55,8 +58,8 @@ public sealed class OneWayTest
 			var newTree = await newDoc.GetSyntaxTreeAsync();
 			var changes = newTree.GetChanges(tree);
 
-			Assert.AreEqual(1, changes.Count);
-			Assert.AreEqual("fals", changes[0].NewText);
+			Assert.AreEqual(1, changes.Count, nameof(IList<>.Count));
+			Assert.AreEqual("fals", changes[0].NewText, nameof(TextChange.NewText));
 		}
 	}
 }

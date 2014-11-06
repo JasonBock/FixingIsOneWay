@@ -1,12 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FixingIsOneWay.Test
@@ -15,15 +10,6 @@ namespace FixingIsOneWay.Test
 	public sealed class IsOneWayOperationAnalyzerTests
 	{
 		[TestMethod]
-		public void VerifySyntaxKindsOfInterest()
-		{
-			var analyzer = new IsOneWayOperationAnalyzer();
-			var syntaxKinds = analyzer.SyntaxKindsOfInterest;
-			Assert.AreEqual(1, syntaxKinds.Length);
-			Assert.AreEqual(SyntaxKind.MethodDeclaration, syntaxKinds[0]);
-		}
-
-		[TestMethod]
 		public void VerifySupportedDiagnostics()
 		{
 			var analyzer = new IsOneWayOperationAnalyzer();
@@ -31,11 +17,11 @@ namespace FixingIsOneWay.Test
 			Assert.AreEqual(1, diagnostics.Length);
 
 			var diagnostic = diagnostics[0];
-			Assert.AreEqual(diagnostic.Id, IsOneWayOperationConstants.DiagnosticId);
-			Assert.AreEqual(diagnostic.Description, IsOneWayOperationConstants.Description);
-			Assert.AreEqual(diagnostic.MessageFormat, IsOneWayOperationConstants.Message);
-			Assert.AreEqual(diagnostic.Category, "Usage");
-			Assert.AreEqual(diagnostic.DefaultSeverity, DiagnosticSeverity.Error);
+			Assert.AreEqual(diagnostic.Id, IsOneWayOperationConstants.DiagnosticId, nameof(DiagnosticDescriptor.Id));
+			Assert.AreEqual(diagnostic.Title, IsOneWayOperationConstants.Title, nameof(DiagnosticDescriptor.Title));
+			Assert.AreEqual(diagnostic.MessageFormat, IsOneWayOperationConstants.Message, nameof(DiagnosticDescriptor.MessageFormat));
+			Assert.AreEqual(diagnostic.Category, IsOneWayOperationConstants.Category, nameof(DiagnosticDescriptor.Category));
+			Assert.AreEqual(diagnostic.DefaultSeverity, DiagnosticSeverity.Error, nameof(DiagnosticDescriptor.DefaultSeverity));
 		}
 
 		[TestMethod]
@@ -52,7 +38,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(120, 12));
-			Assert.AreEqual(0, diagnostics.Count);
+			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
 		}
 
 		[TestMethod]
@@ -69,7 +55,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(118, 12));
-			Assert.AreEqual(0, diagnostics.Count);
+			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
 		}
 
 		[TestMethod]
@@ -86,7 +72,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(104, 12));
-			Assert.AreEqual(0, diagnostics.Count);
+			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
 		}
 
 		[TestMethod]
@@ -103,7 +89,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(117, 12));
-			Assert.AreEqual(0, diagnostics.Count);
+			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
 		}
 
 		[TestMethod]
@@ -120,7 +106,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(119, 12));
-			Assert.AreEqual(1, diagnostics.Count);
+			Assert.AreEqual(1, diagnostics.Count, nameof(List<>.Count));
 		}
 	}
 }

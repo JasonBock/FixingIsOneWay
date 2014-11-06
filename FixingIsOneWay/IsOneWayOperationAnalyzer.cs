@@ -1,24 +1,21 @@
-using System;
-using System.Collections.Immutable;
-using System.Threading;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.ServiceModel;
+using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
 
 namespace FixingIsOneWay
 {
-	[DiagnosticAnalyzer]
-	[ExportDiagnosticAnalyzer("FindingIsOneWayOperationsWithReturnValues", LanguageNames.CSharp)]
-	public sealed class IsOneWayOperationAnalyzer
-		: ISyntaxNodeAnalyzer<SyntaxKind>
+	[DiagnosticAnalyzer(LanguageNames.CSharp)]
+	public sealed class IsOneWayOperationAnalyzer 
+		: DiagnosticAnalyzer
 	{
 		private static DiagnosticDescriptor makeOneWayFalseRule = new DiagnosticDescriptor(
-			IsOneWayOperationConstants.DiagnosticId, IsOneWayOperationConstants.Description,
-			IsOneWayOperationConstants.Message, "Usage", DiagnosticSeverity.Error, true);
+			IsOneWayOperationConstants.DiagnosticId, IsOneWayOperationConstants.Title,
+			IsOneWayOperationConstants.Message, IsOneWayOperationConstants.Category, 
+			DiagnosticSeverity.Error, true);
 
-		public ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
 		{
 			get
 			{
@@ -26,57 +23,49 @@ namespace FixingIsOneWay
 			}
 		}
 
-		public ImmutableArray<SyntaxKind> SyntaxKindsOfInterest
+		public override void Initialize(AnalysisContext context)
 		{
-			get
-			{
-				return ImmutableArray.Create(SyntaxKind.MethodDeclaration);
-			}
+			context.RegisterSyntaxNodeAction<SyntaxKind>(
+				IsOneWayOperationAnalyzer.AnalyzeMethodDeclaration, SyntaxKind.MethodDeclaration);
 		}
 
-		public void AnalyzeNode(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic,
-			AnalyzerOptions options, CancellationToken cancellationToken)
+		private static void AnalyzeMethodDeclaration(SyntaxNodeAnalysisContext context)
 		{
-			var methodNode = (MethodDeclarationSyntax)node;
+			var methodNode = (MethodDeclarationSyntax)context.Node;
 
 			if (methodNode.AttributeLists.Count > 0)
 			{
-				if (cancellationToken.IsCancellationRequested)
+				if (context.CancellationToken.IsCancellationRequested)
 				{
 					return;
 				}
-
-				var operationContractType =
-					typeof(OperationContractAttribute);
 
 				foreach (var attribute in methodNode.AttributeLists)
 				{
 					foreach (var syntax in attribute.Attributes)
 					{
-						var attributeType = semanticModel.GetTypeInfo(syntax).Type;
+						var attributeType = context.SemanticModel.GetTypeInfo(syntax).Type;
 
 						if (attributeType != null &&
-							attributeType.Name ==
-								operationContractType.Name &&
-							attributeType.ContainingAssembly.Name ==
-								operationContractType.Assembly.GetName().Name)
+							attributeType.Name == IsOneWayOperationConstants.OperationContractTypeName &&
+							attributeType.ContainingAssembly.Name == IsOneWayOperationConstants.OperationContractTypeAssemblyName)
 						{
 							foreach (var argument in syntax.ArgumentList.Arguments)
 							{
 								if (argument.NameEquals.Name.Identifier.Text == IsOneWayOperationConstants.IdentifierText &&
 									argument.Expression.IsKind(SyntaxKind.TrueLiteralExpression))
 								{
-									if (cancellationToken.IsCancellationRequested)
+									if (context.CancellationToken.IsCancellationRequested)
 									{
 										return;
 									}
 
-									var returnType = semanticModel.GetTypeInfo(methodNode.ReturnType).Type;
+									var returnType = context.SemanticModel.GetTypeInfo(methodNode.ReturnType).Type;
 
 									if (returnType != null &&
 										returnType.SpecialType != SpecialType.System_Void)
 									{
-										addDiagnostic(Diagnostic.Create(IsOneWayOperationAnalyzer.makeOneWayFalseRule,
+										context.ReportDiagnostic(Diagnostic.Create(IsOneWayOperationAnalyzer.makeOneWayFalseRule,
 											argument.GetLocation()));
 										return;
 									}
