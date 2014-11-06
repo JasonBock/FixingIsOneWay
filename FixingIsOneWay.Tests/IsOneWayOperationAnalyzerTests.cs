@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FixingIsOneWay.Test
+namespace FixingIsOneWay.Tests
 {
 	[TestClass]
 	public sealed class IsOneWayOperationAnalyzerTests

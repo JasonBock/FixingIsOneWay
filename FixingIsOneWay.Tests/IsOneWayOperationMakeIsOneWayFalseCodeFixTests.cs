@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FixingIsOneWay.Test
+namespace FixingIsOneWay.Tests
 {
 	[TestClass]
 	public sealed class IsOneWayOperationMakeIsOneWayFalseCodeFixTests

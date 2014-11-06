@@ -4,7 +4,7 @@ namespace FixingIsOneWay.Tests
 {
     public class MyService
     {
-        [OperationContract(IsOneWay = false)]
+        [OperationContract(IsOneWay = true)]
         public string MyOperation() { return null; }
     }
 }

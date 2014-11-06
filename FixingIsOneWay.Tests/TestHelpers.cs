@@ -9,7 +9,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FixingIsOneWay.Test
+namespace FixingIsOneWay.Tests
 {
 	internal static class TestHelpers
 	{
