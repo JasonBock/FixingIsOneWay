@@ -1,7 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FixingIsOneWay.Tests
@@ -18,8 +17,8 @@ namespace FixingIsOneWay.Tests
 
 			var diagnostic = diagnostics[0];
 			Assert.AreEqual(diagnostic.Id, IsOneWayOperationConstants.DiagnosticId, nameof(DiagnosticDescriptor.Id));
-			Assert.AreEqual(diagnostic.Title, IsOneWayOperationConstants.Title, nameof(DiagnosticDescriptor.Title));
-			Assert.AreEqual(diagnostic.MessageFormat, IsOneWayOperationConstants.Message, nameof(DiagnosticDescriptor.MessageFormat));
+			Assert.AreEqual(diagnostic.Title.ToString(), IsOneWayOperationConstants.Title, nameof(DiagnosticDescriptor.Title));
+			Assert.AreEqual(diagnostic.MessageFormat.ToString(), IsOneWayOperationConstants.Message, nameof(DiagnosticDescriptor.MessageFormat));
 			Assert.AreEqual(diagnostic.Category, IsOneWayOperationConstants.Category, nameof(DiagnosticDescriptor.Category));
 			Assert.AreEqual(diagnostic.DefaultSeverity, DiagnosticSeverity.Error, nameof(DiagnosticDescriptor.DefaultSeverity));
 		}
@@ -38,7 +37,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(120, 12));
-			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
+			Assert.AreEqual(0, diagnostics.Count, nameof(diagnostics.Count));
 		}
 
 		[TestMethod]
@@ -55,7 +54,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(118, 12));
-			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
+			Assert.AreEqual(0, diagnostics.Count, nameof(diagnostics.Count));
 		}
 
 		[TestMethod]
@@ -72,7 +71,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(104, 12));
-			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
+			Assert.AreEqual(0, diagnostics.Count, nameof(diagnostics.Count));
 		}
 
 		[TestMethod]
@@ -89,7 +88,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(117, 12));
-			Assert.AreEqual(0, diagnostics.Count, nameof(List<>.Count));
+			Assert.AreEqual(0, diagnostics.Count, nameof(diagnostics.Count));
 		}
 
 		[TestMethod]
@@ -106,7 +105,7 @@ public sealed class OneWayTest
 
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
 				code, new TextSpan(119, 12));
-			Assert.AreEqual(1, diagnostics.Count, nameof(List<>.Count));
+			Assert.AreEqual(1, diagnostics.Count, nameof(diagnostics.Count));
 		}
 	}
 }

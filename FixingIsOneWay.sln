@@ -1,18 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22310.1
+VisualStudioVersion = 14.0.22512.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay", "FixingIsOneWay\FixingIsOneWay.csproj", "{A0C6BA42-8283-4FBE-B104-6CDB13CC1175}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay", "FixingIsOneWay\FixingIsOneWay.csproj", "{10DB947A-4888-4DC9-8374-64F614FA1A3B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C9B5BA0B-0075-433A-AC0C-CBB52A046772}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A670E882-75BC-48FE-9B71-4F09102E1374}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay.Test", "FixingIsOneWay.Tests\FixingIsOneWay.Tests.csproj", "{E202FF19-56D3-447B-B42D-8D1273B81327}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay.Tests", "FixingIsOneWay.Tests\FixingIsOneWay.Tests.csproj", "{FFC3AC47-CE02-468C-91C6-E3E54D798A89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay.Vsix", "FixingIsOneWay.Vsix\FixingIsOneWay.Vsix.csproj", "{FD919C1F-A1BE-4E00-B343-5C09DABDEA65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay.Vsix", "FixingIsOneWay.Vsix\FixingIsOneWay.Vsix.csproj", "{1BF7F983-7BDE-4E6B-9D43-CCA612A1F2F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,18 +20,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A0C6BA42-8283-4FBE-B104-6CDB13CC1175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A0C6BA42-8283-4FBE-B104-6CDB13CC1175}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A0C6BA42-8283-4FBE-B104-6CDB13CC1175}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A0C6BA42-8283-4FBE-B104-6CDB13CC1175}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E202FF19-56D3-447B-B42D-8D1273B81327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E202FF19-56D3-447B-B42D-8D1273B81327}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E202FF19-56D3-447B-B42D-8D1273B81327}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E202FF19-56D3-447B-B42D-8D1273B81327}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD919C1F-A1BE-4E00-B343-5C09DABDEA65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD919C1F-A1BE-4E00-B343-5C09DABDEA65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD919C1F-A1BE-4E00-B343-5C09DABDEA65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD919C1F-A1BE-4E00-B343-5C09DABDEA65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10DB947A-4888-4DC9-8374-64F614FA1A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10DB947A-4888-4DC9-8374-64F614FA1A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10DB947A-4888-4DC9-8374-64F614FA1A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10DB947A-4888-4DC9-8374-64F614FA1A3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC3AC47-CE02-468C-91C6-E3E54D798A89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC3AC47-CE02-468C-91C6-E3E54D798A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC3AC47-CE02-468C-91C6-E3E54D798A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFC3AC47-CE02-468C-91C6-E3E54D798A89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BF7F983-7BDE-4E6B-9D43-CCA612A1F2F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BF7F983-7BDE-4E6B-9D43-CCA612A1F2F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BF7F983-7BDE-4E6B-9D43-CCA612A1F2F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BF7F983-7BDE-4E6B-9D43-CCA612A1F2F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

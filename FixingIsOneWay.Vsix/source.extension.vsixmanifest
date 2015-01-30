@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="FixingIsOneWay.Vsix..ab7b795d-0ad0-4a69-a0b9-471e653ed080" Version="1.0" Language="en-US" Publisher="JASON"/>
+    <Identity Id="FixingIsOneWay.Vsix..e0d45e35-cbed-40fb-9f83-88d98b4f6fb1" Version="1.0" Language="en-US" Publisher="JASON"/>
     <DisplayName>FixingIsOneWay.Vsix</DisplayName>
     <Description xml:space="preserve">This is a sample diagnostic extension for the .NET Compiler Platform ("Roslyn").</Description>
   </Metadata>
@@ -12,7 +12,7 @@
     <InstallationTarget Version="[14.0,]" Id="Microsoft.VisualStudio.VSWinExpress" />
   </Installation>
   <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="FixingIsOneWay" Path="|FixingIsOneWay|"/>
