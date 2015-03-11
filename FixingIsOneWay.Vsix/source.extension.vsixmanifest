@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="FixingIsOneWay.Vsix..e0d45e35-cbed-40fb-9f83-88d98b4f6fb1" Version="1.0" Language="en-US" Publisher="JASON"/>
+    <Identity Id="FixingIsOneWay.Vsix..540618d1-94d0-4618-b1d6-6566dda1cf0b" Version="1.0" Language="en-US" Publisher="JASON"/>
     <DisplayName>FixingIsOneWay.Vsix</DisplayName>
     <Description xml:space="preserve">This is a sample diagnostic extension for the .NET Compiler Platform ("Roslyn").</Description>
   </Metadata>

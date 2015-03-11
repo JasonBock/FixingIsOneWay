@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 
 namespace FixingIsOneWay
 {
@@ -15,9 +16,12 @@ namespace FixingIsOneWay
 	public sealed class IsOneWayOperationMakeIsOneWayFalseCodeFix
 		: CodeFixProvider
 	{
-		public sealed override ImmutableArray<string> GetFixableDiagnosticIds()
+		public override ImmutableArray<string> FixableDiagnosticIds
 		{
-			return ImmutableArray.Create(IsOneWayOperationConstants.DiagnosticId);
+			get
+			{
+				return ImmutableArray.Create(IsOneWayOperationConstants.DiagnosticId);
+			}
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -25,7 +29,7 @@ namespace FixingIsOneWay
 			return WellKnownFixAllProviders.BatchFixer;
 		}
 
-		public sealed override async Task ComputeFixesAsync(CodeFixContext context)
+		public override async Task RegisterCodeFixesAsync(CodeFixContext context)
 		{
 			var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
@@ -52,10 +56,10 @@ namespace FixingIsOneWay
 
 			var newRoot = root.ReplaceToken(trueToken, falseToken);
 
-			context.RegisterFix(
+			context.RegisterCodeFix(
 				CodeAction.Create(
 					IsOneWayOperationMakeIsOneWayFalseCodeFixConstants.Description,
-					context.Document.WithSyntaxRoot(newRoot)), diagnostic);
+					(token) => Task.FromResult<Document>(context.Document.WithSyntaxRoot(newRoot))), diagnostic);
 		}
 	}
 }

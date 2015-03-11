@@ -19,7 +19,7 @@ namespace FixingIsOneWay.Tests
 		public void VerifyGetFixableDiagnosticIds()
 		{
 			var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
-			var ids = fix.GetFixableDiagnosticIds().ToList();
+			var ids = fix.FixableDiagnosticIds.ToList();
 
 			Assert.AreEqual(1, ids.Count, nameof(ids.Count));
 			Assert.AreEqual(IsOneWayOperationConstants.DiagnosticId, ids[0], nameof(IsOneWayOperationConstants.DiagnosticId));
@@ -48,7 +48,7 @@ public sealed class OneWayTest
 
          var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
 			var codeFixContext = new CodeFixContext(document, diagnostics[0], codeActionRegistration, new CancellationToken(false));
-			await fix.ComputeFixesAsync(codeFixContext);
+			await fix.RegisterCodeFixesAsync(codeFixContext);
 
 			Assert.AreEqual(1, actions.Count);
 			var action = actions[0];

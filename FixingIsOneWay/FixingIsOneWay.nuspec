@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0"?>
-<package>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>FixingIsOneWay</id>
     <version>1.0.0.0</version>
@@ -13,7 +13,7 @@
     <description>FixingIsOneWay</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
     <copyright>Copyright</copyright>
-    <tags>Tag1 Tag2</tags>
+    <tags>Tag, Tag2</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework="" />
     </frameworkAssemblies>
