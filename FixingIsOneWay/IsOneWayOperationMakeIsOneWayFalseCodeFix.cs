@@ -59,7 +59,7 @@ namespace FixingIsOneWay
 			context.RegisterCodeFix(
 				CodeAction.Create(
 					IsOneWayOperationMakeIsOneWayFalseCodeFixConstants.Description,
-					(token) => Task.FromResult<Document>(context.Document.WithSyntaxRoot(newRoot))), diagnostic);
+					_ => Task.FromResult<Document>(context.Document.WithSyntaxRoot(newRoot))), diagnostic);
 		}
 	}
 }

@@ -26,7 +26,8 @@ namespace FixingIsOneWay.Tests
 			var root = await document.GetSyntaxRootAsync();
 			var node = root.FindNode(methodDeclarationSpan);
 
-			var compilation = (await document.Project.GetCompilationAsync()).WithAnalyzers(ImmutableArray.Create(new IsOneWayOperationAnalyzer() as DiagnosticAnalyzer));
+			var compilation = (await document.Project.GetCompilationAsync())
+				.WithAnalyzers(ImmutableArray.Create(new IsOneWayOperationAnalyzer() as DiagnosticAnalyzer));
 			return (await compilation.GetAnalyzerDiagnosticsAsync()).ToList();
 		}
 
