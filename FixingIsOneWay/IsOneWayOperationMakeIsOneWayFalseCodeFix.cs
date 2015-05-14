@@ -7,7 +7,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
 
 namespace FixingIsOneWay
 {
@@ -39,10 +38,7 @@ namespace FixingIsOneWay
 			}
 
 			var diagnostic = context.Diagnostics.First();
-			var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-			var attributeArgument = root.FindToken(diagnosticSpan.Start)
-				.Parent.AncestorsAndSelf().OfType<AttributeArgumentSyntax>().First();
+			var attributeArgument = root.FindNode(diagnostic.Location.SourceSpan) as AttributeArgumentSyntax;
 
 			if (context.CancellationToken.IsCancellationRequested)
 			{

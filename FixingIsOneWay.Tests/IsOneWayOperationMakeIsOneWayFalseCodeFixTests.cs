@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,14 +29,7 @@ namespace FixingIsOneWay.Tests
 		[TestMethod]
 		public async Task VerifyGetFixes()
 		{
-			var code = @"
-using System.ServiceModel;
-
-public sealed class OneWayTest
-{
-	[OperationContract(IsOneWay = true)]
-	public string MyOperation() { return null; }
-}";
+			var code = File.ReadAllText(@"Targets\GetFixes.cs");
 			var document = TestHelpers.Create(code);
 			var tree = await document.GetSyntaxTreeAsync();
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
@@ -47,7 +41,8 @@ public sealed class OneWayTest
 				(a, _) => { actions.Add(a); });
 
          var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
-			var codeFixContext = new CodeFixContext(document, diagnostics[0], codeActionRegistration, new CancellationToken(false));
+			var codeFixContext = new CodeFixContext(document, diagnostics[0], 
+				codeActionRegistration, new CancellationToken(false));
 			await fix.RegisterCodeFixesAsync(codeFixContext);
 
 			Assert.AreEqual(1, actions.Count);
