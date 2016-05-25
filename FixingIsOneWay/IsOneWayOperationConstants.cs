@@ -1,14 +1,19 @@
-﻿namespace FixingIsOneWay
+﻿using Microsoft.CodeAnalysis;
+
+namespace FixingIsOneWay
 {
 	public static class IsOneWayOperationConstants
 	{
 		public const string Category = "Usage";
-		public const string DiagnosticId = "MakeOneWayFalseDiagnosticId";
-		public const string Title = "Find IsOneWay Operations With Return Values";
-		public const string IdentifierText = "IsOneWay";
-		public const string OperationContractTypeAssemblyName = "System.ServiceModel";
-		public const string OperationContractTypeName = "OperationContractAttribute";
-		public const string Message = "One-way WCF operations must return System.Void.";
+		public const string Id = "MakeOneWayFalseDiagnosticId";
+		public const string Message = "Find IsOneWay Operations With Return Values";
+		public const string Title = "One-way WCF operations must return System.Void.";
+		public const DiagnosticSeverity Severity = DiagnosticSeverity.Error;
+	}
+
+	public static class IsOneWayOperationReturnVoidCodeFixConstants
+	{
+		public const string Description = "Return System.Void";
 	}
 
 	public static class IsOneWayOperationMakeIsOneWayFalseCodeFixConstants

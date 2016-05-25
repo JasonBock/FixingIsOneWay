@@ -1,77 +1,77 @@
+﻿using System.Collections.Immutable;
+using System.Linq;
+using System.ServiceModel;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
+using System.Reflection;
 
 namespace FixingIsOneWay
 {
 	[DiagnosticAnalyzer(LanguageNames.CSharp)]
-	public sealed class IsOneWayOperationAnalyzer 
+	public sealed class IsOneWayOperationAnalyzer
 		: DiagnosticAnalyzer
 	{
-		private static DiagnosticDescriptor makeOneWayFalseRule = new DiagnosticDescriptor(
-			IsOneWayOperationConstants.DiagnosticId, IsOneWayOperationConstants.Title,
-			IsOneWayOperationConstants.Message, IsOneWayOperationConstants.Category, 
-			DiagnosticSeverity.Error, true);
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			IsOneWayOperationConstants.Id, IsOneWayOperationConstants.Title,
+			IsOneWayOperationConstants.Message, IsOneWayOperationConstants.Category,
+			IsOneWayOperationConstants.Severity, true);
 
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
 		{
 			get
 			{
-				return ImmutableArray.Create(IsOneWayOperationAnalyzer.makeOneWayFalseRule);
+				return ImmutableArray.Create(IsOneWayOperationAnalyzer.Descriptor);
 			}
 		}
 
 		public override void Initialize(AnalysisContext context)
 		{
 			context.RegisterSyntaxNodeAction<SyntaxKind>(
-				IsOneWayOperationAnalyzer.AnalyzeMethodDeclaration, SyntaxKind.MethodDeclaration);
+			  this.AnalyzeNode, SyntaxKind.MethodDeclaration);
 		}
 
-		private static void AnalyzeMethodDeclaration(SyntaxNodeAnalysisContext context)
+		public void AnalyzeNode(SyntaxNodeAnalysisContext context)
 		{
 			var methodNode = (MethodDeclarationSyntax)context.Node;
 
 			if (methodNode.AttributeLists.Count > 0)
 			{
-				if (context.CancellationToken.IsCancellationRequested)
-				{
-					return;
-				}
+				context.CancellationToken.ThrowIfCancellationRequested();
 
-				foreach (var attribute in methodNode.AttributeLists)
+				var returnType = context.SemanticModel.GetTypeInfo(methodNode.ReturnType).Type;
+
+				if (returnType != null &&
+					returnType.SpecialType != SpecialType.System_Void)
 				{
-					foreach (var syntax in attribute.Attributes)
+					context.CancellationToken.ThrowIfCancellationRequested();
+
+					var operationContractType =
+						typeof(OperationContractAttribute);
+					var operationContractTypeName = operationContractType.Name;
+					var operationContractTypeAssemblyName = operationContractType.GetTypeInfo().Assembly.GetName().Name;
+
+					// TODO (in full disclosure): Undo the LINQ.
+					var trueArgument = (
+						from attribute in methodNode.AttributeLists
+						from syntax in attribute.Attributes
+						let attributeType = context.SemanticModel.GetTypeInfo(syntax).Type
+						where
+							attributeType != null &&
+							attributeType.Name == operationContractTypeName &&
+							attributeType.ContainingAssembly.Name == operationContractTypeAssemblyName
+						from argument in syntax.ArgumentList.Arguments
+						where
+							argument.NameEquals.Name.Identifier.Text == "IsOneWay" &&
+							argument.Expression.IsKind(SyntaxKind.TrueLiteralExpression)
+						select argument).FirstOrDefault();
+
+					if (trueArgument != null)
 					{
-						var attributeType = context.SemanticModel.GetTypeInfo(syntax).Type;
-
-						if (attributeType != null &&
-							attributeType.Name == IsOneWayOperationConstants.OperationContractTypeName &&
-							attributeType.ContainingAssembly.Name == IsOneWayOperationConstants.OperationContractTypeAssemblyName)
-						{
-							foreach (var argument in syntax.ArgumentList.Arguments)
-							{
-								if (argument.NameEquals.Name.Identifier.Text == IsOneWayOperationConstants.IdentifierText &&
-									argument.Expression.IsKind(SyntaxKind.TrueLiteralExpression))
-								{
-									if (context.CancellationToken.IsCancellationRequested)
-									{
-										return;
-									}
-
-									var returnType = context.SemanticModel.GetTypeInfo(methodNode.ReturnType).Type;
-
-									if (returnType != null &&
-										returnType.SpecialType != SpecialType.System_Void)
-									{
-										context.ReportDiagnostic(Diagnostic.Create(IsOneWayOperationAnalyzer.makeOneWayFalseRule,
-											argument.GetLocation()));
-										return;
-									}
-								}
-							}
-						}
+						context.ReportDiagnostic(Diagnostic.Create(
+						  IsOneWayOperationAnalyzer.Descriptor,
+						  trueArgument.GetLocation()));
 					}
 				}
 			}

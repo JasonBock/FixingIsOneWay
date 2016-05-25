@@ -1,69 +1,107 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
+﻿using Xunit;
 using System.Threading.Tasks;
 
 namespace FixingIsOneWay.Tests
 {
-	[TestClass]
 	public sealed class IsOneWayOperationAnalyzerTests
 	{
-		[TestMethod]
-		public void VerifySupportedDiagnostics()
+		[Fact]
+		public void GetSupportedDiagnostics()
 		{
 			var analyzer = new IsOneWayOperationAnalyzer();
-			var diagnostics = analyzer.SupportedDiagnostics;
-			Assert.AreEqual(1, diagnostics.Length);
+			var supportedDiagnostics = analyzer.SupportedDiagnostics;
 
-			var diagnostic = diagnostics[0];
-			Assert.AreEqual(diagnostic.Id, IsOneWayOperationConstants.DiagnosticId, nameof(DiagnosticDescriptor.Id));
-			Assert.AreEqual(diagnostic.Title.ToString(), IsOneWayOperationConstants.Title, nameof(DiagnosticDescriptor.Title));
-			Assert.AreEqual(diagnostic.MessageFormat.ToString(), IsOneWayOperationConstants.Message, nameof(DiagnosticDescriptor.MessageFormat));
-			Assert.AreEqual(diagnostic.Category, IsOneWayOperationConstants.Category, nameof(DiagnosticDescriptor.Category));
-			Assert.AreEqual(diagnostic.DefaultSeverity, DiagnosticSeverity.Error, nameof(DiagnosticDescriptor.DefaultSeverity));
+			Assert.Equal(1, supportedDiagnostics.Length);
+
+			var supportedDiagnostic = supportedDiagnostics[0];
+
+			Assert.Equal(IsOneWayOperationConstants.Id, supportedDiagnostic.Id);
+			Assert.Equal(IsOneWayOperationConstants.Title, supportedDiagnostic.Title);
+			Assert.Equal(IsOneWayOperationConstants.Message, supportedDiagnostic.MessageFormat);
+			Assert.Equal(IsOneWayOperationConstants.Category, supportedDiagnostic.Category);
+			Assert.Equal(IsOneWayOperationConstants.Severity, supportedDiagnostic.DefaultSeverity);
 		}
 
-		private static async Task RunAnalysis(string path, TextSpan span, int expectedDiagnosticCount)
+		[Fact]
+		public async Task AnalzeNodeWhereMethodDoesNotHaveAnyAttributes()
 		{
-			var code = File.ReadAllText(path);
-			var diagnostics = await TestHelpers.GetDiagnosticsAsync(code, span);
-			Assert.AreEqual(expectedDiagnosticCount, diagnostics.Count, nameof(diagnostics.Count));
+			var code =
+@"public class AClass
+{ 
+	public void AMethod() { }
+}";
+			await TestHelpers.RunAnalysisAsync<IsOneWayOperationAnalyzer>(code,
+			  new string[0]);
 		}
 
-		[TestMethod]
-		public async Task AnalyzeWithIsOneWayFalseAndReturnTypeIsNotVoid()
+		[Fact]
+		public async Task AnalzeNodeWhereMethodHasAttributesButNotOperationContractAttribute()
 		{
-			await IsOneWayOperationAnalyzerTests.RunAnalysis(
-				@"Targets\IsOneWayFalseAndReturnTypeIsNotVoid.cs", new TextSpan(120, 12), 0);
+			var code =
+@"public class AClass
+{ 
+	[Obsolete]
+	public void AMethod() { }
+}";
+			await TestHelpers.RunAnalysisAsync<IsOneWayOperationAnalyzer>(code,
+			  new string[0]);
 		}
 
-		[TestMethod]
-		public async Task AnalyzeWithIsOneWayFalseAndReturnTypeIsVoid()
+		[Fact]
+		public async Task AnalzeNodeWhereMethodHasOperationContractAttributeButIsOneWayIsFalse()
 		{
-			await IsOneWayOperationAnalyzerTests.RunAnalysis(
-				@"Targets\IsOneWayFalseAndReturnTypeIsVoid.cs", new TextSpan(118, 12), 0);
+			var code =
+@"using System.ServiceModel;
+
+public class AClass
+{
+	[OperationContract]
+	public void AMethod() { }
+}";
+			await TestHelpers.RunAnalysisAsync<IsOneWayOperationAnalyzer>(code,
+			  new string[0]);
 		}
 
-		[TestMethod]
-		public async Task AnalyzeWithIsOneWayNotSpecified()
+		[Fact]
+		public async Task AnalzeNodeWhereMethodHasOperationContractAttributeAndIsOneWayIsTrueButReturnTypeIsVoid()
 		{
-			await IsOneWayOperationAnalyzerTests.RunAnalysis(
-				@"Targets\IsOneWayNotSpecified.cs", new TextSpan(104, 12), 0);
+			var code =
+@"using System.ServiceModel;
+
+public class AClass
+{
+	[OperationContract(IsOneWay = true)]
+	public void AMethod() { }
+}";
+			await TestHelpers.RunAnalysisAsync<IsOneWayOperationAnalyzer>(code,
+			  new string[0]);
 		}
 
-		[TestMethod]
-		public async Task AnalyzeWithIsOneWayTrueAndReturnTypeIsVoid()
+		[Fact]
+		public async Task AnalzeNodeWhereMethodHasOperationContractAttributeAndIsOneWayIsTrueAndReturnTypeIsNotVoid()
 		{
-			await IsOneWayOperationAnalyzerTests.RunAnalysis(
-				@"Targets\IsOneWayTrueAndReturnTypeIsVoid.cs", new TextSpan(117, 12), 0);
-		}
+			var code =
+@"using System.ServiceModel;
 
-		[TestMethod]
-		public async Task AnalyzeWithIsOneWayTrueAndReturnTypeIsNotVoid()
-		{
-			await IsOneWayOperationAnalyzerTests.RunAnalysis(
-				@"Targets\IsOneWayTrueAndReturnTypeIsNotVoid.cs", new TextSpan(119, 12), 1);
+public class AClass
+{
+	[OperationContract(IsOneWay = true)]
+	public string AMethod() { return string.Empty; }
+}";
+			await TestHelpers.RunAnalysisAsync<IsOneWayOperationAnalyzer>(code,
+			  new[] { IsOneWayOperationConstants.Id }, 
+			  diagnostics =>
+			  {
+				  Assert.Equal(1, diagnostics.Length);
+				  var diagnostic = diagnostics[0];
+				  Assert.Equal(0, diagnostic.AdditionalLocations.Count);
+				  Assert.Equal(IsOneWayOperationConstants.Title, diagnostic.Descriptor.Title);
+				  Assert.Equal(IsOneWayOperationConstants.Id, diagnostic.Id);
+				  Assert.Equal(IsOneWayOperationConstants.Severity, diagnostic.Severity);
+				  var span = diagnostic.Location.SourceSpan;
+				  Assert.Equal(74, span.Start);
+				  Assert.Equal(89, span.End);
+			  });
 		}
 	}
 }

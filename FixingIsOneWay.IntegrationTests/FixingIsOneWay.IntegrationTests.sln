@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22013.1
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay.IntegrationTests", "FixingIsOneWay.IntegrationTests\FixingIsOneWay.IntegrationTests.csproj", "{0E5C6A33-0E4D-47D0-A981-A7CE884D774C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixingIsOneWay.IntegrationTests", "FixingIsOneWay.IntegrationTests\FixingIsOneWay.IntegrationTests.csproj", "{F8301937-FB63-4AD7-9CD5-1054B3E588DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0E5C6A33-0E4D-47D0-A981-A7CE884D774C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E5C6A33-0E4D-47D0-A981-A7CE884D774C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E5C6A33-0E4D-47D0-A981-A7CE884D774C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E5C6A33-0E4D-47D0-A981-A7CE884D774C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8301937-FB63-4AD7-9CD5-1054B3E588DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8301937-FB63-4AD7-9CD5-1054B3E588DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8301937-FB63-4AD7-9CD5-1054B3E588DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8301937-FB63-4AD7-9CD5-1054B3E588DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

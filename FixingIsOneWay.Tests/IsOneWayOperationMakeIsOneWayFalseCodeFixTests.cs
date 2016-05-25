@@ -1,61 +1,61 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.Text;
+using Xunit;
+using Microsoft.CodeAnalysis.CodeFixes;
+using System;
+using System.Collections.Immutable;
 
 namespace FixingIsOneWay.Tests
 {
-	[TestClass]
 	public sealed class IsOneWayOperationMakeIsOneWayFalseCodeFixTests
 	{
-		[TestMethod]
-		public void VerifyGetFixableDiagnosticIds()
+		[Fact]
+		public void GetFixableDiagnosticIds()
 		{
 			var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
-			var ids = fix.FixableDiagnosticIds.ToList();
+			var diagnosticIds = fix.FixableDiagnosticIds;
 
-			Assert.AreEqual(1, ids.Count, nameof(ids.Count));
-			Assert.AreEqual(IsOneWayOperationConstants.DiagnosticId, ids[0], nameof(IsOneWayOperationConstants.DiagnosticId));
+			Assert.Equal(1, diagnosticIds.Length);
+			Assert.Equal(IsOneWayOperationConstants.Id, diagnosticIds[0]);
 		}
 
-		[TestMethod]
-		public async Task VerifyGetFixes()
+		[Fact]
+		public async Task GetFixes()
 		{
-			var code = File.ReadAllText(@"Targets\GetFixes.cs");
+			var code =
+@"using System.ServiceModel;
+
+public class AClass
+{
+	[OperationContract(IsOneWay = true)]
+	public string AMethod() { return string.Empty; }
+}";
+
 			var document = TestHelpers.Create(code);
 			var tree = await document.GetSyntaxTreeAsync();
 			var diagnostics = await TestHelpers.GetDiagnosticsAsync(
-				document, new TextSpan(119, 12));
+				code, new IsOneWayOperationAnalyzer());
 			var sourceSpan = diagnostics[0].Location.SourceSpan;
 
 			var actions = new List<CodeAction>();
 			var codeActionRegistration = new Action<CodeAction, ImmutableArray<Diagnostic>>(
-				(a, _) => { actions.Add(a); });
+			  (a, _) => { actions.Add(a); });
 
-         var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
-			var codeFixContext = new CodeFixContext(document, diagnostics[0], 
-				codeActionRegistration, new CancellationToken(false));
+			var fix = new IsOneWayOperationMakeIsOneWayFalseCodeFix();
+			var codeFixContext = new CodeFixContext(document, diagnostics[0],
+			  codeActionRegistration, new CancellationToken(false));
 			await fix.RegisterCodeFixesAsync(codeFixContext);
 
-			Assert.AreEqual(1, actions.Count);
-			var action = actions[0];
+			Assert.Equal(1, actions.Count);
 
-			var operation = (await action.GetOperationsAsync(
-				new CancellationToken(false))).ToArray()[0] as ApplyChangesOperation;
-			var newDoc = operation.ChangedSolution.GetDocument(document.Id);
-			var newTree = await newDoc.GetSyntaxTreeAsync();
-			var changes = newTree.GetChanges(tree);
-
-			Assert.AreEqual(1, changes.Count, nameof(changes.Count));
-			Assert.AreEqual("fals", changes[0].NewText, nameof(TextChange.NewText));
+			await TestHelpers.VerifyActionAsync(actions,
+			  IsOneWayOperationMakeIsOneWayFalseCodeFixConstants.Description, document,
+			  tree, new[] { "fals" });
 		}
 	}
 }

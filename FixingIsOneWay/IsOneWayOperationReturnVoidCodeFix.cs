@@ -12,7 +12,7 @@ namespace FixingIsOneWay
 {
 	[ExportCodeFixProvider(LanguageNames.CSharp)]
 	[Shared]
-	public sealed class IsOneWayOperationMakeIsOneWayFalseCodeFix
+	public sealed class IsOneWayOperationReturnVoidCodeFix
 		: CodeFixProvider
 	{
 		public override ImmutableArray<string> FixableDiagnosticIds
@@ -32,27 +32,27 @@ namespace FixingIsOneWay
 		{
 			var root = await context.Document.GetSyntaxRootAsync(
 				context.CancellationToken).ConfigureAwait(false);
+			var model = await context.Document.GetSemanticModelAsync();
 
 			var diagnostic = context.Diagnostics[0];
 			var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-			var attributeArgument = root.FindToken(diagnosticSpan.Start)
-				.Parent.AncestorsAndSelf().OfType<AttributeArgumentSyntax>().First();
+			var returnNode = root.FindToken(diagnosticSpan.Start)
+				.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First()
+				.DescendantNodes().OfType<PredefinedTypeSyntax>().First();
 
 			context.CancellationToken.ThrowIfCancellationRequested();
 
-			var trueToken = attributeArgument.Expression.GetFirstToken();
+			var voidReturnNode = SyntaxFactory.PredefinedType( 
+				SyntaxFactory.Token(returnNode.GetLeadingTrivia(),
+					SyntaxKind.VoidKeyword, returnNode.GetTrailingTrivia()));
 
-			var falseToken = SyntaxFactory.Token(trueToken.LeadingTrivia,
-				SyntaxKind.FalseKeyword, trueToken.TrailingTrivia);
-
-			var newRoot = root.ReplaceToken(trueToken, falseToken);
+			var newRoot = root.ReplaceNode(returnNode, voidReturnNode);
 
 			context.RegisterCodeFix(
 				CodeAction.Create(
-					IsOneWayOperationMakeIsOneWayFalseCodeFixConstants.Description,
+					IsOneWayOperationReturnVoidCodeFixConstants.Description,
 					_ => Task.FromResult(context.Document.WithSyntaxRoot(newRoot)),
-					IsOneWayOperationMakeIsOneWayFalseCodeFixConstants.Description),
+					IsOneWayOperationReturnVoidCodeFixConstants.Description),
 				diagnostic);
 		}
 	}
